@@ -45,7 +45,7 @@ The project simulates the processing of financial transactions in a system, such
 1. **Clone the repository**:
     ```bash
     git clone https://github.com/NaveenS143/Performance-Optimization-of-Large-Scale-Data-Processing-System.git
-    cd financial-transaction-processor
+    cd Performance-Optimization-of-Large-Scale-Data-Processing-System
     ```
 
 2. **Install Python dependencies**:
