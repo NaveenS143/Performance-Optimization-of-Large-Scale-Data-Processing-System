@@ -1,15 +1,25 @@
-// TransactionProcessor.h
-#pragma once
-#include<iostream>
-#include <fstream>     
-#include <vector>      
-#include <sstream>  
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <sstream>
+#include <map>  // To group by currency
+#include <algorithm>  // For sorting
+#include <cctype>  // For tolower()
+#include <string>
 #include "Transaction.h"
 
 class TransactionProcessor {
 public:
     std::vector<Transaction> transactions;
 
+    // Helper function to trim leading/trailing spaces
+    std::string trim(const std::string& str) {
+        size_t first = str.find_first_not_of(" \t\n\r\f\v");
+        size_t last = str.find_last_not_of(" \t\n\r\f\v");
+        return (first == std::string::npos || last == std::string::npos) ? "" : str.substr(first, last - first + 1);
+    }
+
+    // Load transactions from a CSV file
     void loadTransactionsFromCSV(const std::string& filename) {
         std::ifstream file(filename);
         if (!file.is_open()) {
@@ -39,6 +49,8 @@ public:
             std::getline(ss, status, ',');
             std::getline(ss, location, ',');
 
+            // Trim and normalize location before adding it to transactions
+            location = trim(location);
             transactions.emplace_back(id, timestamp, accountID, type, amount, currency, status, location);
         }
 
@@ -46,25 +58,41 @@ public:
         std::cout << "Loaded " << transactions.size() << " transactions.\n";
     }
 
-    double aggregateAmountByType(const std::vector<Transaction>& transactions, const std::string& type) {
-        double total = 0.0;
-        for (const auto& transaction : transactions) {
-            if (transaction.transactionType == type) {
-                total += transaction.amount;
-            }
-        }
-        return total;
-    }
-    
-    std::vector<Transaction> filterTransactionsByStatus(const std::vector<Transaction>& transactions, const std::string& status) {
+    // Filter transactions by city (location), trim and normalize both city and location
+    std::vector<Transaction> filterTransactionsByCity(const std::string& city) {
         std::vector<Transaction> filtered;
+        std::string normalizedCity = trim(city);  // Normalize the input city name
+
         for (const auto& transaction : transactions) {
-            if (transaction.status == status) {
+            std::string normalizedLocation = trim(transaction.location);  // Normalize the location field
+
+            if (normalizedLocation == normalizedCity) {
                 filtered.push_back(transaction);
             }
         }
+
+        // Debugging: Show the number of filtered transactions
+        std::cout << "Found " << filtered.size() << " transactions for city: " << city << "\n";
+        
         return filtered;
     }
 
-};
+    // Sort transactions by transaction amount in descending order
+    void sortTransactionsByAmount(std::vector<Transaction>& filteredTransactions) {
+        std::sort(filteredTransactions.begin(), filteredTransactions.end(), 
+                  [](const Transaction& a, const Transaction& b) {
+                      return a.amount > b.amount;  // Sort in descending order
+                  });
+    }
 
+    // Group transactions by currency
+    std::map<std::string, std::vector<Transaction>> groupTransactionsByCurrency(const std::vector<Transaction>& filteredTransactions) {
+        std::map<std::string, std::vector<Transaction>> groupedByCurrency;
+
+        for (const auto& transaction : filteredTransactions) {
+            groupedByCurrency[transaction.currency].push_back(transaction);
+        }
+
+        return groupedByCurrency;
+    }
+};
