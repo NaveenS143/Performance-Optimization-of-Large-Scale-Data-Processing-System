@@ -48,34 +48,21 @@ The project simulates the processing of financial transactions in a system, such
     cd Performance-Optimization-of-Large-Scale-Data-Processing-System
     ```
 
-2. **Install Python dependencies**:
-    - Ensure Python is installed (version 3.6 or higher).
-    - Install any required Python libraries (if any):
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-3. **Generate Data**:
+2. **Generate Data**:
     - Run the Python script to generate a CSV file of synthetic financial transactions.
     ```bash
-    python generate_transactions.py --num_transactions 1000 --cities "New York,London,Tokyo"
+    python data_generator.py
     ```
 
     This will create a `financial_transactions.csv` file in the repository with the specified number of transactions and cities.
 
-4. **Compile the C++ project**:
+3. **Compile the C++ project**:
    - Use `g++` or any C++ compiler to build the transaction processor.
     ```bash
-    g++ -std=c++17 main.cpp TransactionProcessor.cpp -o transactionProcessor
+    g++ main.cpp 
     ```
 
-5. **Run the program**:
-    - After compiling, run the C++ program with the generated CSV file:
-    ```bash
-    ./transactionProcessor
-    ```
-
-6. **Sample Output**:
+4. **Sample Output**:
     The program will output filtered, sorted, and grouped transaction data based on the given city.
 
     Example:
@@ -91,7 +78,7 @@ The project simulates the processing of financial transactions in a system, such
 
 ## How It Works
 
-1. **Generate Data**: The `generate_transactions.py` Python script generates synthetic financial transactions. The generated data includes random transaction amounts, account IDs, locations, transaction types, and other details.
+1. **Generate Data**: The `data_generator.py` Python script generates synthetic financial transactions. The generated data includes random transaction amounts, account IDs, locations, transaction types, and other details.
 
 2. **Loading Transactions**: The `TransactionProcessor` class loads the generated financial transaction data from the CSV file into a vector of `Transaction` objects.
 
@@ -103,9 +90,9 @@ The project simulates the processing of financial transactions in a system, such
 
 ## Files Structure
 
-- **generate_transactions.py**: Python script that generates synthetic transaction data in CSV format.
+- **data_generator.py**: Python script that generates synthetic transaction data in CSV format.
 - **main.cpp**: Contains the entry point of the program and handles user interaction with the `TransactionProcessor`.
-- **TransactionProcessor.cpp**: Implements the `TransactionProcessor` class, which handles reading, filtering, sorting, and grouping transactions.
+- **TransactionProcessor.h**: Implements the `TransactionProcessor` class, which handles reading, filtering, sorting, and grouping transactions.
 - **Transaction.h**: Defines the `Transaction` class with the fields representing a transaction.
 - **financial_transactions.csv**: The generated CSV file containing the transaction data (created by the Python script).
 
